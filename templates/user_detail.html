@@ -1,41 +1,12 @@
-<h2 id='username'>User: {user.username} </h2>
+<p id='user_id'>Database Record ID: {person._id}</p>
 
-{?user.name}
-    <p>{user.name.given} {?user.name.nickname}"{user.name.nickname}"{/user.name.nickname} {user.name.family}<p>
-{/user.name}
+{person.gender}
 
-<p id='user_id'>Database Record ID: {user._id}</p>
-
-{?user.roles}
-    Roles:
-    <ul>
-    {#user.roles}
+{#person.names}
         <li>{.}</li>
-    {/user.roles}
-    </ul>
-{/user.roles}
+{/person.names}
 
 <script type="text/javascript">
     $(document).ready(function() {
-        var db = require("db").current();
-        var users = require("users");
-        users.get('{user.username}', function (err, doc) {
-            if (err) {console.log('User does not exist, creating...'); console.log(err);
-                users.create('{user.username}', '{user.password}', {roles: []}, function (err, response) {
-                    if (err) {console.log(err);}// there was an error creating the user
-                    else {
-                        console.log(response); 
-                        db.getDoc('{user._id}', null, function (err, response) {
-                            if (response) {
-                                doc = response;
-                                doc.password = ' '; // set password to blank once user is added to _users database
-                                db.saveDoc(doc, function (err, response) {console.log(err, response)});
-                            } else {console.log(err)};
-                        });
-                    };  
-                });}// there was an error fetching the user document
-            else  {console.log('User exists: ', doc);}// success
-        });
-        
     });
 </script>

@@ -1,3 +1,6 @@
 [submodule "docs/gedcomx"]
 	path = docs/gedcomx
-	url = git://github.com/FamilySearch/gedcomx.git
+	url = https://github.com/FamilySearch/gedcomx.git
+[submodule "docs/gedcomx-rest"]
+	path = docs/gedcomx-rest
+	url = https://github.com/FamilySearch/gedcomx-rs.git
