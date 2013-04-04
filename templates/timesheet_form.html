@@ -1,0 +1,62 @@
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span8">
+        <!--Main content-->
+        <h1>{form_title}</h1>
+        <abbr title="click this for new record ID - i.e. if you're getting 'document conflict' errors"><h6 id="doc_id" onclick="$('#id__id').val(uuid.v1()); $('#doc_id').text($('#id__id').val());"></h6></abbr>
+        <form method="{method}" action="{action}">
+          {form|s}
+          <input type="submit" value="Save Timesheet" />
+        </form>
+    </div>
+    
+    <div class="span4">
+      <!--Sidebar content-->
+      <h3>Timesheet Entry Tips:</h3>
+      <ul>
+        <li>If you're a new volunteer, <strong>enter your first initial and last name - all lower-case - under Volunteer</strong>; for example, if your name is <em>John Smith</em>, enter <em>jsmith</em></li>
+        <li>Make sure you <strong>use the same volunteer ID each time</strong> you log your hours - otherwise, your "total hours" may show up incorrectly!</li>
+      </ul>
+    </div>
+
+<script src="{baseURL}/static/js/bootstrap-datepicker.js"></script>
+<script src="{baseURL}/static/js/uuid.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var userlist = [];
+        $('#id__id').val(uuid.v1());
+        $('#doc_id').text($('#id__id').val());
+        //var users = require("users");
+        //var session = require("session");
+        var db = require('db').current();
+        db.getView('frontdesk', 'volunteers', {'group': true}, function (err, response) {
+            if (response) {
+                $.each(response.rows, function(key, val) {
+                    userlist.push(val.key);
+                    //console.log(val);
+                });
+            };
+            if (err) {
+                console.log(err);
+            };
+        });
+        //users.list(function (err, list) {
+        //    if (list) {
+        //        $.each(list, function(key, val) {
+        //            userlist.push(val.id.split(':')[1]);
+        //        });
+        //    };
+        //});  
+        //userlist.sort();
+        $('#id_volunteer').typeahead({source: userlist, items:5});
+        $('#id_volunteer').attr('autocomplete', 'off');
+        $('#id_date').datepicker({format: 'yyyy,mm,dd'});
+        var now = new Date();
+        $('#id_date').datepicker('setValue', now);
+        //2012.06.20 bdunnette: disabled the session.info function, since it seems to cause issues when users aren't logged in
+        //session.info(function (err, info) {
+        //    if (err) {console.log(err)}// an error occurred getting session info
+        //    else {$('#id_volunteer').val(info.userCtx.name)};    // set volunteer id to logged in user's ID by default
+        //});
+    });
+</script>

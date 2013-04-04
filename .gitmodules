@@ -1,0 +1,3 @@
+[submodule "docs/gedcomx"]
+	path = docs/gedcomx
+	url = git://github.com/FamilySearch/gedcomx.git

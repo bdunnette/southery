@@ -1,0 +1,73 @@
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span8">
+        <!--Body content-->
+        <h1>{form_title}</h1>
+        <abbr title="click this for new record ID - i.e. if you're getting 'document conflict' errors"><h6 id="doc_id" onclick="$('#id__id').val(uuid.v1()); $('#doc_id').text($('#id__id').val());"></h6></abbr>
+
+        <form method="{method}" action="{action}">
+          {form|s}
+          <input type="submit" value="Save" />
+        </form>
+
+    </div>
+    
+    <div class="span4">
+      <!--Sidebar content-->
+      <h3>Item Entry Hints:</h3>
+      <ul>
+        <li>An "item" is any text separated by comma(s) <br/><em>Example:</em> "CPU, memory, inkjet printer" is three items</li>
+        <li>If the first part of an item (before a space) is a number, this is assumed to be the quantity sold/donated<br/><em>Example:</em> To sell 512 MB of memory and an 80 GB hard disk, you should enter "1 512 MB DIMM, 1 80 GB hard disk" or similar, <em>or</em> something like "DIMM: 512 MB, HD: 80 GB" - either will work!</li>
+        <li>If an item <em>ends</em> with a number (with or without a dollar/currency sign), this is assumed to be the <em>total</em> price of that item (or set of items)<br/><em>Example:</em> "2 keyboards $4" would be saved as two keyboards, totaling $4 ($2 each)</li>
+        <li>To give an "each" (per-item) price, end with a number preceded by the "@" symbol<br/><em>Example:</em> "3 GeekBoxen @40" would mean 3 systems at $40 each ($120 total)
+      </ul>
+    </div>
+    
+  </div>
+</div>
+
+<script src="{baseURL}/static/js/bootstrap-datepicker.js"></script>
+<script src="{baseURL}/static/js/uuid.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#id__id').val(uuid.v1());
+        $('#doc_id').text($('#id__id').val());
+        $("fieldset:contains('Date')").attr('id', 'date-fieldset');
+        $('#id_date').datepicker({format: 'yyyy,mm,dd'});
+        var now = new Date();
+        $('#id_date').datepicker('setValue', now);
+        var db = require("db").current();
+
+        var people = [];
+        db.getView('frontdesk', 'people', {'group': true}, function (err, response) {
+            if (response) {
+                $.each(response.rows, function(key, val) {
+                    people.push(val.key);
+                });
+            } else {console.log(err)};
+        });
+
+        var cities = [];
+        db.getView('frontdesk', 'cities', {'group': true}, function (err, response) {
+            if (response) {
+                $.each(response.rows, function(key, val) {
+                    cities.push(val.key);
+                });
+            } else {console.log(err)};
+        });
+
+        $('#id_party_name').typeahead({source: people, items:5});
+        $('#id_party_name').attr('autocomplete', 'off');
+        $('#id_party_city').typeahead({source: cities, items:3});
+        $('#id_party_city').attr('autocomplete', 'off');
+        
+        if ($('#id__rev').val() != '') {
+            console.log($('#id__rev').val());
+            rev_split = $('#id__rev').val().split('-')
+            $('#id__rev').val((parseInt(rev_split[0]) + 1) + '-' + rev_split[1]);
+            console.log($('#id__rev').val());
+        }
+        
+    });
+</script>

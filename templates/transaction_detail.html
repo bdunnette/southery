@@ -1,0 +1,91 @@
+	<script>var transaction_total = 0</script>
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <div class="span4">
+		<!-- TODO: Eventually, logo and address, etc. (branding) should be stored outside of template -->
+		<div class="logo"><h1>Free<br/>Geek</h1>Twin Cities</div>
+		
+		<p>Free Geek Twin Cities<br/>
+		2537 25th Ave S<br/>
+		Minneapolis, MN 55406<br/>
+		http://freegeektwincities.org</p>
+		EIN #27-3563468
+		
+		<p>
+		<strong>{transaction.party.name}</strong><br/>
+		{transaction.party.email}
+		</p>
+		
+		<p>{transaction_date_string}</p>
+	</div>
+	<div class="span4" id="disclaimer">
+		<p id="donation_disclaimer">Free Geek Twin Cities is a tax-exempt, not-for profit organization organized under Section 501(c)3 of the Internal Revenue Code. All donations are fully tax deductable to the extent allowable by law. Donations are non-refundable.</p>
+		<p id="sale_disclaimer">All sales are final. No cash refunds.</p>
+	</div>
+	<div class="span4">
+		<div class="receipt-header">{transaction.transaction_type}<br/>Receipt</div>
+
+		<p style="text-align:right">Free Geek Twin Cities is an<br/>all-volunteer organization that <br/>reuses and recycles computers<br/>to provide technical education<br/>and access to our community.</p>
+	</div>
+    {?transaction.items}
+    <table class="table table-striped table-bordered">
+        <tr><th>Quantity</th><th>Description</th><th>Unit Price</th><th>Extended Price</th></tr>
+        {#transaction.items}
+            <tr>
+                <td>{.quantity}</td>
+                <td>{.description}</td>
+                {?.unit_price}
+                    <td>${.unit_price}</td>
+                {:else}
+                    <td></td>
+                {/.unit_price}
+                
+                {?.extended_price}
+                    <td>${.extended_price}</td>
+                    <script>transaction_total += {.extended_price}</script>
+                {:else}
+                    <td></td>
+                {/.extended_price}
+            </tr>
+        {/transaction.items}
+        <script>if (transaction_total != 0) {document.write('<tr><td colspan=3 style="text-align:right"><strong>Total:</strong></td><td><strong>$' + transaction_total.toFixed(2) + '</strong></td></tr>')}</script>
+    </table>
+    <br/>
+    {/transaction.items}
+    
+    {?transaction.payments}
+        <table class="table table-striped table-bordered">
+            <tr><th>{payment_header}</th><tr>
+            {#transaction.payments}
+                <script>console.log({.});</script>
+                <tr><td>
+                {?.amount}
+                    ${amount}                     
+                {:else}
+                    {.}
+                {/.amount}
+                </td></tr>
+            {/transaction.payments}
+        </table>
+        <br/>
+    {/transaction.payments}
+
+    
+    {?transaction.comments}
+        <table class="table table-striped table-bordered">
+            <thead><tr><th>Comments</th></tr></thead>
+            <tbody><tr><td>{transaction.comments}</td></tr></tbody>
+        </table>
+    {/transaction.comments}
+    <span class="noprint"><a href="/_utils/document.html?frontdesk/{transaction._id}">Edit Transaction</a></span>
+    
+<script type="text/javascript">
+    $(document).ready(function() {
+		var transaction_type = '{transaction.transaction_type}'.toLowerCase();
+        console.log(transaction_type);
+        $('#sale_disclaimer').hide();
+        $('#donation_disclaimer').hide();
+        $('#' + transaction_type + "_disclaimer").show()
+    });
+</script>
