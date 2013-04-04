@@ -15,9 +15,9 @@
         "skip_uncommitted" : true
     },
     "less" : {
-	"compress": true,
-	"compile": ["static/css/main.less"],
-	"remove_from_attachments": true
+		"compress": true,
+		"compile": ["static/css/main.less"],
+		"remove_from_attachments": true
     },
     "dependencies": {
         "modules": null,
@@ -34,6 +34,10 @@
     	"session": null,
         "kanso-topbar": null,
     	"git-info": null,
-	"datelib": null
+    	"moment": null,
+		"datelib": null,
+		"knockout": null,
+		"font-awesome-kanso": null,
+		"jeditable": null
     }
 }
